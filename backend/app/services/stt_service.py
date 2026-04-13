@@ -28,7 +28,7 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
         "EnableMiscue": True,
     }
     config_json = json.dumps(assessment_config)
-    config_b64 = base64.b64encode(config_json.encode("utf-8")).decode("utf-8")
+    config_b64 = base64.urlsafe_b64encode(config_json.encode("utf-8")).decode("utf-8")
 
     url = (
         f"https://{settings.AZURE_SPEECH_REGION}.stt.speech.microsoft.com"
@@ -41,7 +41,7 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
             url,
             headers={
                 "Ocp-Apim-Subscription-Key": settings.AZURE_SPEECH_KEY,
-                "Content-Type": "audio/ogg; codecs=opus",
+                "Content-Type": "audio/webm; codecs=opus",
                 "Pronunciation-Assessment": config_b64,
             },
             content=audio_bytes,
