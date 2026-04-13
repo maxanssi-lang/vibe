@@ -137,6 +137,22 @@ export default function PracticePage({ searchParams }: Props) {
               {state === 'done' && (
                 <div className="space-y-3">
                   <p className="text-sm text-green-600 font-medium">녹음 완료</p>
+                  {/* 녹음 재생 버튼 */}
+                  {audioBlob && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => {
+                          const url = URL.createObjectURL(audioBlob);
+                          const audio = new Audio(url);
+                          audio.play();
+                          audio.onended = () => URL.revokeObjectURL(url);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+                      >
+                        🔊 내 녹음 듣기
+                      </button>
+                    </div>
+                  )}
                   <div className="flex gap-2 justify-center">
                     <button
                       onClick={handleEvaluate}
