@@ -10,7 +10,20 @@ def get_or_create_translation(korean: str, db: Session) -> TranslationResponse:
     word = db.query(Word).filter(Word.korean == korean).first()
 
     if word:
-        examples = db.query(Example).filter(Example.word_id == word.id).all()
+        # 기존 예문 삭제 후 새로 생성 (난이도 변경 반영)
+        db.query(Example).filter(Example.word_id == word.id).delete()
+        new_examples = claude_service.generate_examples(
+            word.korean, word.english, word.chinese, word.japanese
+        )
+        for ex in new_examples:
+            db.add(Example(
+                word_id=word.id,
+                language=ex.language,
+                sentence=ex.sentence,
+                korean_translation=ex.korean_translation,
+            ))
+        db.commit()
+
         return TranslationResponse(
             korean=word.korean,
             english=word.english,
@@ -19,10 +32,7 @@ def get_or_create_translation(korean: str, db: Session) -> TranslationResponse:
             chinese_pronunciation=word.chinese_pronunciation,
             japanese=word.japanese,
             japanese_pronunciation=word.japanese_pronunciation,
-            examples=[
-                {"language": ex.language, "sentence": ex.sentence, "korean_translation": ex.korean_translation}
-                for ex in examples
-            ],
+            examples=new_examples,
         )
 
     result = claude_service.translate(korean)

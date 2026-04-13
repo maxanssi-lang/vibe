@@ -22,8 +22,8 @@ Return exactly this JSON structure:
   "japanese_pronunciation": "hiragana, e.g. あい"
 }}"""
 
-EXAMPLE_PROMPT = """Generate one natural example sentence for each language using the given word translations.
-Each sentence should be intermediate level, 10-20 words.
+EXAMPLE_PROMPT = """Generate one very simple example sentence for each language using the given word translations.
+Each sentence should be kindergarten level: short (3-7 words), simple vocabulary, easy to understand for a child.
 
 Word: {korean} (EN: {english}, ZH: {chinese}, JA: {japanese})
 
