@@ -1,9 +1,12 @@
 import base64
 import json
+import logging
 
 import httpx
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 LANGUAGE_MAP = {
     "en": "en-US",
@@ -18,7 +21,6 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
 
     locale = LANGUAGE_MAP[language]
 
-    # Pronunciation Assessment 설정 (Base64 인코딩)
     assessment_config = {
         "ReferenceText": reference_text,
         "GradingSystem": "HundredMark",
@@ -45,17 +47,24 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
             content=audio_bytes,
         )
 
-    if resp.status_code != 200:
-        return {
-            "score": 0,
-            "accuracy_score": 0,
-            "fluency_score": 0,
-            "completeness_score": 0,
-            "words": [],
-            "recognized_text": "",
-        }
+    logger.info(f"Azure STT status: {resp.status_code}")
+    logger.info(f"Azure STT response: {resp.text[:500]}")
 
-    data = resp.json()
+    if resp.status_code != 200:
+        logger.error(f"Azure STT error: {resp.status_code} {resp.text}")
+        return _empty_result()
+
+    try:
+        data = resp.json()
+    except Exception as e:
+        logger.error(f"JSON parse error: {e}, body: {resp.text[:500]}")
+        return _empty_result()
+
+    recognition_status = data.get("RecognitionStatus", "")
+    if recognition_status != "Success":
+        logger.warning(f"Recognition failed: {recognition_status}")
+        return _empty_result()
+
     nbest = data.get("NBest", [{}])[0]
     pa = nbest.get("PronunciationAssessment", {})
 
@@ -80,4 +89,15 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
         "completeness_score": round(pa.get("CompletenessScore", 0)),
         "words": words,
         "recognized_text": data.get("DisplayText", ""),
+    }
+
+
+def _empty_result() -> dict:
+    return {
+        "score": 0,
+        "accuracy_score": 0,
+        "fluency_score": 0,
+        "completeness_score": 0,
+        "words": [],
+        "recognized_text": "",
     }
