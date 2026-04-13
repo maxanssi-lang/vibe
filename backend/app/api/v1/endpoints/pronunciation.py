@@ -33,8 +33,8 @@ async def evaluate_pronunciation(
         raise HTTPException(status_code=400, detail="language는 en, zh, ja 중 하나여야 합니다.")
 
     audio_bytes = await audio.read()
-    logger.info(f"Evaluate request: lang={language}, audio_size={len(audio_bytes)}, text={reference_text[:50]}")
+    print(f"[EVAL] lang={language}, audio_size={len(audio_bytes)}, text={reference_text[:50]}", flush=True)
 
     result = stt_service.evaluate(audio_bytes, reference_text, language)
-    logger.info(f"Evaluate result: score={result['score']}")
+    print(f"[EVAL] result score={result['score']}", flush=True)
     return result

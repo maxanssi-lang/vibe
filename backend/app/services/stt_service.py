@@ -47,11 +47,11 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
             content=audio_bytes,
         )
 
-    logger.info(f"Azure STT status: {resp.status_code}")
-    logger.info(f"Azure STT response: {resp.text[:500]}")
+    print(f"[STT] Azure status: {resp.status_code}", flush=True)
+    print(f"[STT] Azure response: {resp.text[:500]}", flush=True)
 
     if resp.status_code != 200:
-        logger.error(f"Azure STT error: {resp.status_code} {resp.text}")
+        print(f"[STT] Azure error: {resp.status_code} {resp.text}", flush=True)
         return _empty_result()
 
     try:
