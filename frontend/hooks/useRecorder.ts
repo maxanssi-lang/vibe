@@ -4,6 +4,8 @@ import { useState, useRef } from 'react';
 
 type RecorderState = 'idle' | 'recording' | 'done';
 
+const MIME_TYPE = 'audio/webm;codecs=opus';
+
 export function useRecorder() {
   const [state, setState] = useState<RecorderState>('idle');
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -12,7 +14,8 @@ export function useRecorder() {
 
   async function start() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+    const mimeType = MediaRecorder.isTypeSupported(MIME_TYPE) ? MIME_TYPE : 'audio/webm';
+    const recorder = new MediaRecorder(stream, { mimeType });
     chunksRef.current = [];
 
     recorder.ondataavailable = (e) => {
@@ -20,7 +23,7 @@ export function useRecorder() {
     };
 
     recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+      const blob = new Blob(chunksRef.current, { type: mimeType });
       setAudioBlob(blob);
       setState('done');
       stream.getTracks().forEach((t) => t.stop());

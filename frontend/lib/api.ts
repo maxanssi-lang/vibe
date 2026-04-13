@@ -30,7 +30,7 @@ export async function evaluatePronunciation(
   language: string
 ): Promise<PronunciationResult> {
   const formData = new FormData();
-  formData.append("audio", audioBlob, "recording.wav");
+  formData.append("audio", audioBlob, "recording.webm");
   formData.append("reference_text", referenceText);
   formData.append("language", language);
 
