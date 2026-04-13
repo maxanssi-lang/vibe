@@ -12,11 +12,11 @@ class Settings(BaseSettings):
     @property
     def db_url(self) -> str:
         url = self.DATABASE_URL
+        # postgres:// → postgresql+pg8000://
         if url.startswith("postgres://"):
-            url = url.replace("postgres://", "postgresql://", 1)
-        if "sslmode" not in url:
-            sep = "&" if "?" in url else "?"
-            url = f"{url}{sep}sslmode=require"
+            url = url.replace("postgres://", "postgresql+pg8000://", 1)
+        elif url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+pg8000://", 1)
         return url
 
     class Config:
