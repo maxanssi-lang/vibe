@@ -3,7 +3,7 @@ import { PronunciationResult, TranslationResult } from "@/types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 15000,
+  timeout: 60000,
 });
 
 export async function translate(korean: string): Promise<TranslationResult> {
