@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { TranslationResult } from '@/types';
 import { saveWord } from '@/lib/storage';
+import { useTTS } from '@/hooks/useTTS';
 
 interface Props {
   result: TranslationResult;
@@ -21,6 +22,8 @@ const LANG_FLAGS: Record<string, string> = {
 };
 
 export default function TranslationCard({ result }: Props) {
+  const { play, loading, playingKey } = useTTS();
+
   const langs = [
     { key: 'english', word: result.english, pron: result.english_pronunciation, code: 'en' },
     { key: 'chinese', word: result.chinese, pron: result.chinese_pronunciation, code: 'zh' },
@@ -47,23 +50,37 @@ export default function TranslationCard({ result }: Props) {
 
       {/* 번역 카드 3개 */}
       <div className="grid gap-3">
-        {langs.map(({ key, word, pron, code }) => (
-          <div key={key} className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between">
-            <div>
-              <span className="text-xs text-gray-400 font-medium">
-                {LANG_FLAGS[key]} {LANG_LABELS[key]}
-              </span>
-              <p className="text-lg font-semibold text-gray-900 mt-0.5">{word}</p>
-              <p className="text-sm text-gray-500">{pron}</p>
+        {langs.map(({ key, word, pron, code }) => {
+          const ttsKey = `${code}:normal:${word}`;
+          const isPlaying = playingKey === ttsKey;
+
+          return (
+            <div key={key} className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between">
+              <div className="flex-1">
+                <span className="text-xs text-gray-400 font-medium">
+                  {LANG_FLAGS[key]} {LANG_LABELS[key]}
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-lg font-semibold text-gray-900">{word}</p>
+                  <button
+                    onClick={() => play(word, code, 'normal')}
+                    disabled={loading && !isPlaying}
+                    className={`text-lg transition-opacity ${loading && !isPlaying ? 'opacity-30' : 'hover:opacity-70'}`}
+                  >
+                    {isPlaying ? '⏸' : '🔊'}
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500">{pron}</p>
+              </div>
+              <Link
+                href={`/practice?word=${encodeURIComponent(result.korean)}&lang=${code}`}
+                className="text-sm bg-indigo-50 text-indigo-600 rounded-lg px-3 py-1.5 hover:bg-indigo-100 transition-colors whitespace-nowrap ml-3"
+              >
+                발음 연습 →
+              </Link>
             </div>
-            <Link
-              href={`/practice?word=${encodeURIComponent(result.korean)}&lang=${code}`}
-              className="text-sm bg-indigo-50 text-indigo-600 rounded-lg px-3 py-1.5 hover:bg-indigo-100 transition-colors whitespace-nowrap"
-            >
-              발음 연습 →
-            </Link>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 예문 보기 링크 */}
