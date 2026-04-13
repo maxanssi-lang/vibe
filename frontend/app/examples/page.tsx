@@ -91,6 +91,9 @@ function ExampleCard({
       <p className="text-base font-medium text-gray-900 leading-relaxed">
         {example.sentence}
       </p>
+      {example.romanization && (
+        <p className="text-sm text-indigo-500 font-medium">{example.romanization}</p>
+      )}
       <p className="text-sm text-gray-500">{example.korean_translation}</p>
 
       <div className="flex gap-2 pt-1">

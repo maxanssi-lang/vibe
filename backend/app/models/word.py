@@ -31,6 +31,7 @@ class Example(Base):
     word_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("words.id", ondelete="CASCADE"), nullable=False)
     language: Mapped[str] = mapped_column(Enum("en", "zh", "ja", name="language_enum"), nullable=False)
     sentence: Mapped[str] = mapped_column(Text, nullable=False)
+    romanization: Mapped[str | None] = mapped_column(Text, nullable=True)
     korean_translation: Mapped[str] = mapped_column(Text, nullable=False)
 
     word: Mapped["Word"] = relationship("Word", back_populates="examples")

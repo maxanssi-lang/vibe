@@ -8,6 +8,7 @@ class TranslationRequest(BaseModel):
 class ExampleItem(BaseModel):
     language: str  # "en" | "zh" | "ja"
     sentence: str
+    romanization: str | None = None  # 중국어: pinyin, 일본어: romaji
     korean_translation: str
 
 

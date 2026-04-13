@@ -24,6 +24,7 @@ Return exactly this JSON structure:
 
 EXAMPLE_PROMPT = """Generate one very simple example sentence for each language using the given word translations.
 Each sentence should be kindergarten level: short (3-7 words), simple vocabulary, easy to understand for a child.
+For Chinese, add pinyin romanization. For Japanese, add romaji romanization. English has no romanization.
 
 Word: {korean} (EN: {english}, ZH: {chinese}, JA: {japanese})
 
@@ -33,16 +34,19 @@ Return exactly this JSON structure:
     {{
       "language": "en",
       "sentence": "English example sentence.",
+      "romanization": null,
       "korean_translation": "한국어 해석"
     }},
     {{
       "language": "zh",
       "sentence": "中文例句。",
+      "romanization": "pinyin romanization of the Chinese sentence",
       "korean_translation": "한국어 해석"
     }},
     {{
       "language": "ja",
       "sentence": "日本語の例文。",
+      "romanization": "romaji romanization of the Japanese sentence",
       "korean_translation": "한국어 해석"
     }}
   ]

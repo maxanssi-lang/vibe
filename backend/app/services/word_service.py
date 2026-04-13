@@ -20,6 +20,7 @@ def get_or_create_translation(korean: str, db: Session) -> TranslationResponse:
                 word_id=word.id,
                 language=ex.language,
                 sentence=ex.sentence,
+                romanization=ex.romanization,
                 korean_translation=ex.korean_translation,
             ))
         db.commit()

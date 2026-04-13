@@ -79,6 +79,9 @@ export default function PracticePage({ searchParams }: Props) {
           {/* 예문 카드 */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
             <p className="text-base font-medium text-gray-900 leading-relaxed">{example.sentence}</p>
+            {example.romanization && (
+              <p className="text-sm text-indigo-500 font-medium">{example.romanization}</p>
+            )}
             <p className="text-sm text-gray-500">{example.korean_translation}</p>
             <div className="flex gap-2 pt-1">
               <TTSButton

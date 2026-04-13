@@ -1,6 +1,7 @@
 export interface ExampleItem {
   language: "en" | "zh" | "ja";
   sentence: string;
+  romanization: string | null;
   korean_translation: string;
 }
 
