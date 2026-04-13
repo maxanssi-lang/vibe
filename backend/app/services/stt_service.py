@@ -41,7 +41,7 @@ def evaluate(audio_bytes: bytes, reference_text: str, language: str) -> dict:
             url,
             headers={
                 "Ocp-Apim-Subscription-Key": settings.AZURE_SPEECH_KEY,
-                "Content-Type": "audio/webm;codecs=opus",
+                "Content-Type": "audio/ogg; codecs=opus",
                 "Pronunciation-Assessment": config_b64,
             },
             content=audio_bytes,
